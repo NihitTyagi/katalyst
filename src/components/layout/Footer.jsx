@@ -11,7 +11,7 @@ const Footer = () => {
               <span className="text-primary">K</span>ATALYST
             </div>
             <p className="text-gray-400 text-sm">
-              Empowering affiliates to grow with Koders.
+              Empowering affiliates to grow with MT.
             </p>
           </div>
 
@@ -31,7 +31,7 @@ const Footer = () => {
             <ul className="space-y-2 text-sm text-gray-400">
               <li><Link to="/guides" className="hover:text-primary transition-colors">Guides</Link></li>
               <li><Link to="/guides#rules" className="hover:text-primary transition-colors">Rules</Link></li>
-              <li><a href="https://koders.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">About Koders</a></li>
+              <li><a href="https://koders.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">About MT</a></li>
             </ul>
           </div>
 
@@ -46,7 +46,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Katalyst by Koders. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Katalyst by MT. All rights reserved.</p>
         </div>
       </div>
     </footer>

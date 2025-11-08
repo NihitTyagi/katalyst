@@ -8,7 +8,7 @@ const Home = () => {
       <section className="relative bg-gradient-to-br from-gray-50 to-white py-20 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-5xl md:text-6xl font-bold text-dark mb-6">
-            Koders - Crafting Cutting Edge
+            MT- Web Services
             <br />
             <span className="text-primary">Digital Solutions That Scale</span>
           </h1>
@@ -16,7 +16,7 @@ const Home = () => {
             We turn your ideas into powerful, high performing digital products.
           </p>
           <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
-            From custom software to AI-powered solutions, Koders builds scalable innovations designed for impact.
+            From custom software to AI-powered solutions, MT builds scalable innovations designed for impact.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/signup" className="btn-primary">
@@ -33,7 +33,7 @@ const Home = () => {
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-4">
-            Why trust <span className="text-primary">Koders</span> to
+            Why trust <span className="text-primary">MT</span> to
           </h2>
           <h3 className="text-4xl font-bold text-center mb-16">
             <span className="text-primary">Supercharge</span> your business?
@@ -94,7 +94,7 @@ const Home = () => {
               <div className="text-center p-8 bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl">
                 <h3 className="text-3xl font-bold mb-4">Join Our Affiliate Program</h3>
                 <p className="text-gray-600 mb-6">
-                  Refer clients to Koders and earn generous rewards on every successful project.
+                  Refer clients to MT and earn generous rewards on every successful project.
                 </p>
                 <Link to="/signup" className="btn-primary inline-block">
                   Become an Affiliate

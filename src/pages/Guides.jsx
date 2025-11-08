@@ -20,7 +20,7 @@ const Guides = () => {
         <div className="space-y-4 text-gray-700">
           <div>
             <h3 className="font-semibold text-lg mb-2">1. Set Up Your Account</h3>
-            <p>After signing up, you'll receive a unique referral code. This code tracks all leads you refer to Koders.</p>
+            <p>After signing up, you'll receive a unique referral code. This code tracks all leads you refer to MT.</p>
           </div>
           <div>
             <h3 className="font-semibold text-lg mb-2">2. Share Your Referral Link</h3>
@@ -95,7 +95,7 @@ const Guides = () => {
         <div className="space-y-4 text-gray-700">
           <div className="border-l-4 border-primary pl-4">
             <h3 className="font-semibold text-lg mb-1">Eligibility</h3>
-            <p>Open to individuals and businesses who want to promote Koders' services. You must be 18+ years old to participate.</p>
+            <p>Open to individuals and businesses who want to promote MT' services. You must be 18+ years old to participate.</p>
           </div>
           <div className="border-l-4 border-primary pl-4">
             <h3 className="font-semibold text-lg mb-1">Lead Quality</h3>
@@ -107,7 +107,7 @@ const Guides = () => {
           </div>
           <div className="border-l-4 border-primary pl-4">
             <h3 className="font-semibold text-lg mb-1">Ethical Promotion</h3>
-            <p>You must promote Koders honestly and accurately. Misrepresentation, spam, or unethical marketing practices are prohibited.</p>
+            <p>You must promote MT honestly and accurately. Misrepresentation, spam, or unethical marketing practices are prohibited.</p>
           </div>
           <div className="border-l-4 border-primary pl-4">
             <h3 className="font-semibold text-lg mb-1">Reward Disputes</h3>
@@ -115,7 +115,7 @@ const Guides = () => {
           </div>
           <div className="border-l-4 border-primary pl-4">
             <h3 className="font-semibold text-lg mb-1">Program Modifications</h3>
-            <p>Koders reserves the right to modify reward rates, terms, or suspend accounts for violations. You'll be notified of major changes.</p>
+            <p>MT reserves the right to modify reward rates, terms, or suspend accounts for violations. You'll be notified of major changes.</p>
           </div>
           <div className="border-l-4 border-primary pl-4">
             <h3 className="font-semibold text-lg mb-1">Data Privacy</h3>
@@ -146,7 +146,7 @@ const Guides = () => {
           </li>
           <li className="flex gap-3">
             <span className="text-primary">✓</span>
-            <span>Share case studies and success stories from Koders' portfolio</span>
+            <span>Share case studies and success stories from MT' portfolio</span>
           </li>
           <li className="flex gap-3">
             <span className="text-primary">✓</span>

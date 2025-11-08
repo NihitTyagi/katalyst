@@ -184,7 +184,7 @@ const AffiliatePage = () => {
             <div className="bg-gradient-to-r from-dark to-dark-light text-white py-16 px-4">
                 <div className="max-w-4xl mx-auto text-center">
                     <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                        Welcome to <span className="text-primary">Koders</span>
+                        Welcome to <span className="text-primary">MT</span>
                     </h1>
                     <p className="text-xl md:text-2xl text-gray-300 mb-6">
                         Crafting Cutting-Edge Digital Solutions That Scale
@@ -386,7 +386,7 @@ const AffiliatePage = () => {
                             </button>
 
                             <p className="text-xs text-gray-500 text-center">
-                                By submitting this form, you agree to be contacted by Koders regarding your project inquiry.
+                                By submitting this form, you agree to be contacted by MT regarding your project inquiry.
                                 We respect your privacy and will never share your information with third parties.
                             </p>
                         </form>
