@@ -23,16 +23,17 @@ const Leads = () => {
   const fetchLeads = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      
+
       const { data: affiliate } = await supabase
         .from('affiliates')
         .select('id')
         .eq('user_id', user.id)
         .single()
 
+      // Include transactions status for each lead
       const { data, error } = await supabase
         .from('leads')
-        .select('*')
+        .select('*, transactions:transactions(status)')
         .eq('affiliate_id', affiliate.id)
         .order('created_at', { ascending: false })
 
@@ -152,23 +153,31 @@ const Leads = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredLeads.map((lead) => (
-                  <tr key={lead.id} className="border-b hover:bg-gray-50">
-                    <td className="py-3 px-4 font-medium">{lead.name}</td>
-                    <td className="py-3 px-4">{lead.email}</td>
-                    <td className="py-3 px-4">{lead.phone}</td>
-                    <td className="py-3 px-4">{getStatusBadge(lead.status)}</td>
-                    <td className="py-3 px-4">
-                      {lead.amount ? `₹${lead.amount.toLocaleString()}` : '-'}
-                    </td>
-                    <td className="py-3 px-4 font-semibold text-primary">
-                      {lead.reward ? `₹${lead.reward.toLocaleString()}` : '-'}
-                    </td>
-                    <td className="py-3 px-4">
-                      {new Date(lead.created_at).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
+                {filteredLeads.map((lead) => {
+                  // check if lead has paid transaction
+                  const isPaid = lead.transactions?.some(txn => txn.status === 'Paid');
+                  const statusToShow = isPaid ? 'Paid' : lead.status;
+
+                  return (
+                    <tr key={lead.id} className="border-b hover:bg-gray-50">
+                      <td className="py-3 px-4 font-medium">{lead.name}</td>
+                      <td className="py-3 px-4">{lead.email}</td>
+                      <td className="py-3 px-4">{lead.phone}</td>
+                      <td className="py-3 px-4">
+                        {isPaid ? (
+                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-teal-100 text-teal-700">Paid</span>
+                        ) : (
+                          getStatusBadge(statusToShow)
+                        )}
+                      </td>
+                      <td className="py-3 px-4">{lead.amount ? `₹${lead.amount.toLocaleString()}` : '-'}</td>
+                      <td className={`py-3 px-4 font-semibold ${isPaid ? 'text-teal-600': ''}`}>
+                        {lead.reward ? `₹${lead.reward.toLocaleString()}` : '-'}
+                      </td>
+                      <td className="py-3 px-4">{new Date(lead.created_at).toLocaleDateString()}</td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
@@ -179,21 +188,15 @@ const Leads = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
         <div className="card bg-yellow-50 border-yellow-200">
           <div className="text-sm text-gray-600">Pending Leads</div>
-          <div className="text-2xl font-bold">
-            {leads.filter(l => l.status === 'Pending').length}
-          </div>
+          <div className="text-2xl font-bold">{leads.filter(l => l.status === 'Pending').length}</div>
         </div>
         <div className="card bg-green-50 border-green-200">
           <div className="text-sm text-gray-600">Converted Leads</div>
-          <div className="text-2xl font-bold text-green-600">
-            {leads.filter(l => l.status === 'Converted').length}
-          </div>
+          <div className="text-2xl font-bold text-green-600">{leads.filter(l => l.status === 'Converted').length}</div>
         </div>
         <div className="card bg-red-50 border-red-200">
           <div className="text-sm text-gray-600">Rejected Leads</div>
-          <div className="text-2xl font-bold text-red-600">
-            {leads.filter(l => l.status === 'Rejected').length}
-          </div>
+          <div className="text-2xl font-bold text-red-600">{leads.filter(l => l.status === 'Rejected').length}</div>
         </div>
       </div>
 

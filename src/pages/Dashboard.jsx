@@ -23,7 +23,6 @@ const Dashboard = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
 
-      // Fetch affiliate data
       const { data: affiliate, error: affiliateError } = await supabase
         .from('affiliates')
         .select('*')
@@ -34,37 +33,33 @@ const Dashboard = () => {
 
       setReferralCode(affiliate.referral_code)
 
-      // Fetch ALL transactions (pending and paid)
       const { data: allTransactions } = await supabase
         .from('transactions')
         .select('reward_earned, status')
         .eq('affiliate_id', affiliate.id)
 
-      // Calculate pending reward (status = 'Pending')
       const pendingTotal = allTransactions
         ?.filter(t => t.status === 'Pending')
         .reduce((sum, t) => sum + t.reward_earned, 0) || 0
 
-      // Calculate paid reward (status = 'Paid')
       const paidTotal = allTransactions
         ?.filter(t => t.status === 'Paid')
         .reduce((sum, t) => sum + t.reward_earned, 0) || 0
 
       setStats({
-        total_earned: paidTotal, // ← Changed: Only show PAID rewards
+        total_earned: paidTotal,
         total_leads: affiliate.total_leads || 0,
         conversion_count: affiliate.conversion_count || 0,
-        pending_reward: pendingTotal, // ← This shows unpaid rewards
+        pending_reward: pendingTotal,
       })
 
-      // Fetch recent leads
       const { data: leads } = await supabase
         .from('leads')
-        .select('*')
+        .select('*, transactions:transactions(status)')
         .eq('affiliate_id', affiliate.id)
         .order('created_at', { ascending: false })
-        .limit(5)
-
+        .limit(3)  // <-- Limit to 3 recent leads
+      
       setRecentLeads(leads || [])
     } catch (error) {
       toast.error('Failed to load dashboard data')
@@ -74,14 +69,12 @@ const Dashboard = () => {
     }
   }
 
-
   const copyReferralCode = () => {
-  navigator.clipboard.writeText(`${window.location.origin}/affiliate?ref=${referralCode}`)
-  setCopied(true)
-  toast.success('Referral link copied to clipboard!')
-  setTimeout(() => setCopied(false), 2000)
-}
-
+    navigator.clipboard.writeText(`${window.location.origin}/affiliate?ref=${referralCode}`)
+    setCopied(true)
+    toast.success('Referral link copied to clipboard!')
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   const getStatusBadge = (status) => {
     const styles = {
@@ -187,19 +180,30 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {recentLeads.map((lead) => (
-                  <tr key={lead.id} className="border-b hover:bg-gray-50">
-                    <td className="py-3 px-4">{lead.name}</td>
-                    <td className="py-3 px-4">{lead.email}</td>
-                    <td className="py-3 px-4">{getStatusBadge(lead.status)}</td>
-                    <td className="py-3 px-4">
-                      {lead.reward ? `₹${lead.reward.toLocaleString()}` : '-'}
-                    </td>
-                    <td className="py-3 px-4">
-                      {new Date(lead.created_at).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
+                {recentLeads.map((lead) => {
+                  const hasPaidTxn = lead.transactions?.some(txn => txn.status === 'Paid')
+                  const statusLabel = hasPaidTxn ? 'Paid' : lead.status
+
+                  return (
+                    <tr key={lead.id} className="border-b hover:bg-gray-50">
+                      <td className="py-3 px-4">{lead.name}</td>
+                      <td className="py-3 px-4">{lead.email}</td>
+                      <td className="py-3 px-4">
+                        {hasPaidTxn ? (
+                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-teal-100 text-teal-700">
+                            Paid
+                          </span>
+                        ) : (
+                          getStatusBadge(lead.status)
+                        )}
+                      </td>
+                      <td className={`py-3 px-4 font-semibold ${hasPaidTxn ? 'text-teal-600' : ''}`}>
+                        {lead.reward ? `₹${lead.reward.toLocaleString()}` : '-'}
+                      </td>
+                      <td className="py-3 px-4">{new Date(lead.created_at).toLocaleDateString()}</td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

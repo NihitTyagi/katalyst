@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { DollarSign, Clock, CheckCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
+import InvoiceModal from '@/components/InvoiceModal'
 
 const Wallet = () => {
   const [transactions, setTransactions] = useState([])
@@ -11,6 +12,8 @@ const Wallet = () => {
     paid: 0,
   })
   const [loading, setLoading] = useState(true)
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false)
+  const [selectedTransaction, setSelectedTransaction] = useState(null)
 
   useEffect(() => {
     fetchWalletData()
@@ -19,13 +22,11 @@ const Wallet = () => {
   const fetchWalletData = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      
       const { data: affiliate } = await supabase
         .from('affiliates')
         .select('id, total_earned')
         .eq('user_id', user.id)
         .single()
-
       const { data: transactionData, error } = await supabase
         .from('transactions')
         .select(`
@@ -34,23 +35,18 @@ const Wallet = () => {
         `)
         .eq('affiliate_id', affiliate.id)
         .order('created_at', { ascending: false })
-
       if (error) throw error
-
       const pending = transactionData
         ?.filter(t => t.status === 'Pending')
         .reduce((sum, t) => sum + t.reward_earned, 0) || 0
-
       const paid = transactionData
         ?.filter(t => t.status === 'Paid')
         .reduce((sum, t) => sum + t.reward_earned, 0) || 0
-
       setStats({
         total_earned: affiliate.total_earned || 0,
         pending,
         paid,
       })
-
       setTransactions(transactionData || [])
     } catch (error) {
       toast.error('Failed to load wallet data')
@@ -99,7 +95,6 @@ const Wallet = () => {
           </div>
           <p className="text-sm opacity-80 mt-2">Lifetime earnings</p>
         </div>
-
         <div className="card bg-gradient-to-br from-yellow-500 to-yellow-600 text-white">
           <div className="flex items-center gap-3 mb-2">
             <Clock size={32} />
@@ -110,7 +105,6 @@ const Wallet = () => {
           </div>
           <p className="text-sm opacity-80 mt-2">Awaiting payment</p>
         </div>
-
         <div className="card bg-gradient-to-br from-green-500 to-green-600 text-white">
           <div className="flex items-center gap-3 mb-2">
             <CheckCircle size={32} />
@@ -126,7 +120,6 @@ const Wallet = () => {
       {/* Transaction History */}
       <div className="card">
         <h2 className="text-xl font-semibold mb-6">Transaction History</h2>
-        
         {transactions.length === 0 ? (
           <div className="text-center py-12 text-gray-500">
             <DollarSign size={48} className="mx-auto mb-4 opacity-50" />
@@ -144,6 +137,7 @@ const Wallet = () => {
                   <th className="text-left py-3 px-4">Status</th>
                   <th className="text-left py-3 px-4">Date</th>
                   <th className="text-left py-3 px-4">Paid On</th>
+                  <th className="text-left py-3 px-4">Invoice</th>
                 </tr>
               </thead>
               <tbody>
@@ -165,10 +159,23 @@ const Wallet = () => {
                       {new Date(transaction.created_at).toLocaleDateString()}
                     </td>
                     <td className="py-3 px-4">
-                      {transaction.paid_at 
+                      {transaction.paid_at
                         ? new Date(transaction.paid_at).toLocaleDateString()
                         : '-'
                       }
+                    </td>
+                    <td className="py-3 px-4">
+                      {transaction.status === 'Paid' && transaction.payment_proof_url ? (
+                        <button
+                          onClick={() => {
+                            setSelectedTransaction(transaction);
+                            setShowInvoiceModal(true);
+                          }}
+                          className="underline text-teal-600 font-medium"
+                        >
+                          Invoice
+                        </button>
+                      ) : "-"}
                     </td>
                   </tr>
                 ))}
@@ -177,6 +184,16 @@ const Wallet = () => {
           </div>
         )}
       </div>
+
+      {showInvoiceModal && selectedTransaction && (
+        <InvoiceModal
+          txn={selectedTransaction}
+          onClose={() => {
+            setShowInvoiceModal(false);
+            setSelectedTransaction(null);
+          }}
+        />
+      )}
 
       {/* Payment Info */}
       <div className="mt-6 card bg-blue-50 border-blue-200">

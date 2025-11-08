@@ -36,7 +36,7 @@ const AddLeadModal = ({ onClose, onSuccess }) => {
             project_requirements: formData.project_requirements,
             status: 'Pending',
             amount: null,
-            commission: null,
+            reward: null,
           },
         ])
 

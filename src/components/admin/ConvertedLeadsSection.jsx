@@ -4,12 +4,17 @@ import toast from 'react-hot-toast'
 import LeadCard from './LeadCard'
 import LeadDetailsModal from './LeadDetailsModal'
 import { RefreshCw } from 'lucide-react'
+import MarkAsPaidModal from './MarkAsPaidModal'
+
 
 const ConvertedLeadsSection = ({ onRefresh }) => {
   const [leads, setLeads] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedLead, setSelectedLead] = useState(null)
   const [showDetailsModal, setShowDetailsModal] = useState(false)
+  const [showPaidModal, setShowPaidModal] = useState(false)
+  const [selectedTransaction, setSelectedTransaction] = useState(null)
+
 
   useEffect(() => {
     fetchConvertedLeads()
@@ -37,10 +42,10 @@ const ConvertedLeadsSection = ({ onRefresh }) => {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      
+
       // Filter out any that might have invalid lead data
       const validLeads = data?.filter(t => t.leads !== null) || []
-      
+
       setLeads(validLeads)
     } catch (error) {
       toast.error('Failed to load converted leads')
@@ -55,28 +60,11 @@ const ConvertedLeadsSection = ({ onRefresh }) => {
     setShowDetailsModal(true)
   }
 
-  const handleMarkAsPaid = async (transaction) => {
-    if (!confirm(`Mark payment of ₹${transaction.reward_earned.toLocaleString()} as paid?`)) return
-
-    try {
-      const { error } = await supabase
-        .from('transactions')
-        .update({
-          status: 'Paid',
-          paid_at: new Date().toISOString()
-        })
-        .eq('id', transaction.id)
-
-      if (error) throw error
-
-      toast.success('Payment marked as paid!')
-      fetchConvertedLeads()
-      onRefresh()
-    } catch (error) {
-      toast.error('Failed to update payment status')
-      console.error(error)
-    }
+  const handleMarkAsPaid = (transaction) => {
+    setSelectedTransaction(transaction)
+    setShowPaidModal(true)
   }
+
 
   if (loading) {
     return (
@@ -132,6 +120,23 @@ const ConvertedLeadsSection = ({ onRefresh }) => {
           }}
         />
       )}
+
+      {showPaidModal && selectedTransaction && (
+        <MarkAsPaidModal
+          transaction={selectedTransaction}
+          onClose={() => {
+            setShowPaidModal(false)
+            setSelectedTransaction(null)
+          }}
+          onSuccess={() => {
+            setShowPaidModal(false)
+            setSelectedTransaction(null)
+            fetchConvertedLeads()
+            onRefresh()
+          }}
+        />
+      )}
+
     </div>
   )
 }
